@@ -4,7 +4,8 @@ import React from "react";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 
 import Main from "./components/Main"  
-import Layout from "./components/Layout"
+import Layout from "./components/Layout";
+import Quiz from './components/Quiz';
 
 function App() {
 
@@ -15,9 +16,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Main />} />
-          {/* <Route path="blogs" element={<Blogs />} />
-          <Route path="contact" element={<Contact />} />
-          <Route path="*" element={<NoPage />} /> */}
+          <Route path="quiz" element={<Quiz />}/>
         </Route>
       </Routes>
     </BrowserRouter>

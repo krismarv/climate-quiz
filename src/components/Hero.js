@@ -35,7 +35,7 @@ export default function Example() {
               <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
                 <button className="">
                   <a
-                    href="#"
+                    href="/quiz"
                     className=""
                   >
                     Jít na kvíz
