@@ -15,3 +15,19 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+button {
+  background-color:#db8c92;
+  font-family:"B612 Mono";
+  height:2rem !important;
+  padding:25px 35px;
+  display:flex;
+  align-items:center;
+  margin-left:1%;
+  margin-bottom:5%;
+  font-size:1.1rem;
+  border-radius:100px !important;
+  color:white !important;
+}
+.pale {
+  background-color:#e2a9ae
+}
