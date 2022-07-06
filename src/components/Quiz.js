@@ -22,7 +22,16 @@ export default function Quiz (props) {
         .then(res => res.json())
         .then(data => {
     
-            setQuestions(data.data)
+            setQuestions(data.data);
+            setQuestions(oldQuestions => {
+                return oldQuestions.map(question => {
+                    let answers = question.attributes.Wrong_answer.map(answer => {
+                        return answer.Wrong_answer
+                    })
+                    answers.splice(Math.floor(Math.random()*answers.length), 0, question.attributes.Right_answer)
+                    return {...question, allAnswers: answers}
+                })
+            })
             if (!data.data.length) {
                 
                 setQuestionsEmpty(true)
@@ -33,24 +42,17 @@ export default function Quiz (props) {
         initialize()
     }, [])
 
-        React.useEffect(()=>{
-            questions.forEach(question => {
-                let answers = question.attributes.Wrong_answer.map(answer => {
-                    return answer.Wrong_answer
-                })
-            })
-        }, [questions])
+
         // question JSX elements
         React.useEffect(()=> {
-            console.log(questions)
+            
             setQuestionElements(
                 questions.map (question => {
-
     
-                    let answers = question.attributes.Wrong_answer.map(answer => {
-                        return answer.Wrong_answer
-                    })
-                    answers.splice(Math.floor(Math.random()*answers.length), 0, question.attributes.Right_answer)
+                    // let answers = question.attributes.Wrong_answer.map(answer => {
+                    //     return answer.Wrong_answer
+                    // })
+                    // answers.splice(Math.floor(Math.random()*answers.length), 0, question.attributes.Right_answer)
             
                     return (
                         <Question
@@ -58,7 +60,7 @@ export default function Quiz (props) {
                             questionText={question.attributes.Question_text}
                             explanation={question.attributes.Explanation}
                             questionID={questions.indexOf(question)}
-                            answers={answers}
+                            answers={question.allAnswers}
                             isRight={isRight}
                             qClicked={qClicked}
                         />
@@ -129,7 +131,7 @@ export default function Quiz (props) {
             {questionElements}
             {finished ? <Win 
                 score={score}
-                numberOfQuestions={numberOfQuestions}
+                numberOfQuestions={questions.length}
                 restart={restart}/> : ""
                 }
             {questionsEmpty ? <Empty
