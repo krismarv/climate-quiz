@@ -7,10 +7,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'logo': '#DB8C92'
+        'logo': '#DB8C92', 
+        "neutral": "#F4F4ED"
       },
       fontFamily: {
-        logo: ['B612 Mono']
+        logo: ['Red Hat Mono']
       }
     }
   },

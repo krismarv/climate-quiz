@@ -10,7 +10,7 @@ export default function Nav () {
               <nav className="relative flex items-center justify-between sm:h-10 lg:justify-start" aria-label="Global">
                 <div className="flex items-center flex-grow flex-shrink-0 lg:flex-grow-0">
                   <div className="flex items-center justify-between w-full md:w-auto">
-                    <a href="/" className="flex items-center">
+                    <a href="/" className="flex items-center no-bottom">
                       <span className="sr-only">logo</span>
                       <img
                         alt="logo"
