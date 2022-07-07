@@ -18,18 +18,33 @@ export default function Quiz (props) {
     // initialize question list
     function initialize () {
         setQuestionsEmpty(false)
-        fetch(process.env.REACT_APP_SERVER_URL+`/api/questions?populate=*&pagination[pageSize]=${numberOfQuestions}&pagination[page]=${pagination}`)
+        fetch(process.env.REACT_APP_SERVER_URL+`/api/types?id=1&populate[questions][populate]=*&populate[question_value_estimates][populate]=*&populate[question_sorts][populate]=*&pagination[pageSize]=${numberOfQuestions}&pagination[page]=${pagination}`)
         .then(res => res.json())
         .then(data => {
-    
-            setQuestions(data.data);
+            function addType (qColl, type) {
+                return qColl.map(q => {
+                    return {...q, questionType:type}
+                }
+                    )
+            }
+            let questionsArray = []
+            let start = data.data["0"].attributes
+            questionsArray = questionsArray.concat(addType(start.questions.data, "abcd"))
+                .concat(addType(start.question_value_estimates.data, "estimate"))
+                .concat(addType(start.question_sorts.data, "sort"))
+            setQuestions(questionsArray);
+            console.log(questionsArray)
             setQuestions(oldQuestions => {
                 return oldQuestions.map(question => {
-                    let answers = question.attributes.Wrong_answer.map(answer => {
-                        return answer.Wrong_answer
-                    })
-                    answers.splice(Math.floor(Math.random()*answers.length), 0, question.attributes.Right_answer)
-                    return {...question, allAnswers: answers}
+                    if (question.questionType === "abcd") {
+                        let answers = question.attributes.Wrong_answer.map(answer => {
+                            return answer.Wrong_answer
+                        })
+                        answers.splice(Math.floor(Math.random()*answers.length), 0, question.attributes.Right_answer)
+                        return {...question, allAnswers: answers}
+                    } else {
+                        return {...question}
+                    }
                 })
             })
             if (!data.data.length) {
@@ -42,7 +57,7 @@ export default function Quiz (props) {
         initialize()
     }, [])
 
-
+        console.log(questions)
         // question JSX elements
         React.useEffect(()=> {
             
