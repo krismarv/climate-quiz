@@ -1,0 +1,25 @@
+.post-form {
+    margin:5%
+}
+.post-form input {
+    border:solid .5px #f1f1f1 !important;
+    border-radius:5px;
+    margin:0px 10px;
+    min-width:50vw
+}
+.post-form .input-group {
+    margin:20px 0px;
+    display:flex;
+    justify-content: flex-end;
+}
+.post-form .wysiwyg-editor {
+    border:solid .5px #f1f1f1;
+}
+.post-form .form-submit {
+    min-width:20vw;
+    padding:10px;
+    margin:20px;
+    background:darkslateblue;
+    color:white;
+    font-weight:600
+}
