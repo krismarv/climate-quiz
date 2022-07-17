@@ -13,6 +13,7 @@ export default function PostForm() {
   const [editor2State, setEditor2State] = React.useState(
     EditorState.createEmpty()
   );
+  const [inputState, setInputState] = React.useState({ 0: "" });
 
   // handle FORM change
   function handleChange(event) {
@@ -26,26 +27,32 @@ export default function PostForm() {
     });
   }
 
+  //essentially onChange for rich text editor 1
+  React.useEffect(() => {
+    setQuestion((oldQuestion) => {
+      return {
+        ...oldQuestion,
+        Explanation: convertToRaw(editorState.getCurrentContent()),
+      };
+    });
+  }, [editorState]);
 
   //essentially onChange for rich text editor 1
-  React.useEffect(()=>{
-    setQuestion((oldQuestion)=> {
-        return {
-            ...oldQuestion, 
-            Explanation: convertToRaw(editorState.getCurrentContent())
-        }
-    })
-  }, [editorState])
+  React.useEffect(() => {
+    setQuestion((oldQuestion) => {
+      return {
+        ...oldQuestion,
+        Sources: convertToRaw(editor2State.getCurrentContent()),
+      };
+    });
+  }, [editor2State]);
 
-  //essentially onChange for rich text editor 1
-  React.useEffect(()=>{
-    setQuestion((oldQuestion)=> {
-        return {
-            ...oldQuestion, 
-            Sources: convertToRaw(editor2State.getCurrentContent())
-        }
-    })
-  }, [editor2State])
+  //onChange for Repeater
+  React.useEffect(() => {
+    setQuestion((oldQuestion) => {
+      return { ...oldQuestion, Wrong_answers: Object.values(inputState) };
+    });
+  }, [inputState]);
 
   // handle FORM submit
   function handleSubmit(e) {
@@ -82,7 +89,9 @@ export default function PostForm() {
             />
           </label>
         </div>
-        Vysvětlení otázky:
+        <div className="form-label">Špatné odpovědi:</div>
+        <Repeater inputState={inputState} setInputState={setInputState} />
+        <div className="form-label">Vysvětlení otázky:</div>
         <Editor
           editorState={editorState}
           toolbarClassName="toolbarClassName"
@@ -90,7 +99,7 @@ export default function PostForm() {
           editorClassName="wysiwyg-editor"
           onEditorStateChange={setEditorState}
         />
-        Zdroje:
+        <div className="form-label">Zdroje:</div>
         <Editor
           editorState={editor2State}
           toolbarClassName="toolbarClassName"
@@ -98,8 +107,6 @@ export default function PostForm() {
           editorClassName="wysiwyg-editor"
           onEditorStateChange={setEditor2State}
         />
-        Špatné odpovědi:
-        <Repeater />
         <input type="submit" className="form-submit"></input>
       </form>
     </div>
