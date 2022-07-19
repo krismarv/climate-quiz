@@ -3,7 +3,7 @@ import "../css/question.css"
 import Explanation from "./Explanation";
 
 export default function Question (props) {
-
+    // ok!!
     if (props.questionType === "abcd") {
 
         console.log(props.qClicked)
