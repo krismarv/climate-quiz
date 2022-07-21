@@ -57,10 +57,11 @@ export default function Quiz(props) {
         return (
           <Question
             // will have to convert from raw, -att
-            explanation={stateToHTML(convertFromRaw(JSON.parse(question.Explanation)))}
+            explanation={stateToHTML(
+              convertFromRaw(JSON.parse(question.Explanation))
+            )}
             sources={stateToHTML(convertFromRaw(JSON.parse(question.Sources)))}
             questionID={questions.indexOf(question)}
-            isRight={isRight}
             qClicked={qClicked}
             key={question._id}
             question={question}
@@ -75,44 +76,19 @@ export default function Quiz(props) {
     );
   }, [questions, qClicked]);
 
-  // right answer
-  // specific to abcd!!
-  function isRight(event) {
-    event.preventDefault();
-    let currentQ = questions[event.target.getAttribute("data-question")];
-
-    if (event.target.getAttribute("data-value") === currentQ.Right_answer) {
-      event.target.classList.add("right");
-      setScore((prevScore) => {
-        return prevScore + 1;
-      });
-    } else {
-      event.target.classList.add("wrong");
-    }
-    // remaining answers unclickable
-    let allQAnswers = document.querySelectorAll(
-      `[data-question="${String(event.target.getAttribute("data-question"))}"]`
-    );
-    allQAnswers.forEach((a) => a.classList.add("no-click"));
-
-    setQClicked((oldQClicked) => {
-      return {
-        ...oldQClicked,
-        [event.target.getAttribute("data-question")]: true,
-      };
-    });
-  }
-
   // winning
   React.useEffect(() => {
-    if (Object.keys(qClicked).length === questions.length && Object.keys(qClicked).length !== 0) {
+    if (
+      Object.keys(qClicked).length === questions.length &&
+      Object.keys(qClicked).length !== 0
+    ) {
       setFinished(true);
     } else if (Object.keys(qClicked).length === 0) {
       setFinished(false);
     }
   }, [qClicked, numberOfQuestions, questions.length]);
 
-  console.log(qClicked)
+  console.log(qClicked);
 
   // restart the quiz
   function restart() {
@@ -120,22 +96,20 @@ export default function Quiz(props) {
       return oldPagination + 1;
     });
     setQClicked({});
-    let allQAnswers = document.querySelectorAll(
-        '.answer'
-      );
-      allQAnswers.forEach((a) => {
-        a.classList.remove("no-click");
-        a.classList.remove("wrong");
-        a.classList.remove("right");
-      });
-    let rangeInputs = document.querySelectorAll('.range-input')
-    rangeInputs.forEach((r)=>{
-        r.classList.remove("no-click")
-    })
+    let allQAnswers = document.querySelectorAll(".answer");
+    allQAnswers.forEach((a) => {
+      a.classList.remove("no-click");
+      a.classList.remove("wrong");
+      a.classList.remove("right");
+    });
+    let rangeInputs = document.querySelectorAll(".range-input");
+    rangeInputs.forEach((r) => {
+      r.classList.remove("no-click");
+    });
     initialize();
     setFinished(false);
     setScore(0);
-    setIsCorrect("")
+    setIsCorrect("");
   }
 
   // persist pagination
@@ -149,17 +123,8 @@ export default function Quiz(props) {
     initialize();
     setFinished(false);
     setScore(0);
-    setIsCorrect("")
+    setIsCorrect("");
   }
-//// used previously for start again above
-//   React.useEffect(() => {
-//     console.log("pagination chnages");
-//     initialize();
-//     setFinished(false);
-//     setScore(0);
-//     setClicked(0);
-//     setQClicked({});
-//   }, [pagination]);
 
   return (
     <div className="page flex items-center flex-col pl-5 pr-5">

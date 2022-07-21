@@ -14,6 +14,9 @@ const Question = React.memo(function Question(props) {
           answers={props.question.allAnswers}
           isRight={props.isRight}
           questionID={props.questionID}
+          question={props.question}
+          setScore={props.setScore}
+          setQClicked={props.setQClicked}
         />
       );
       break;
