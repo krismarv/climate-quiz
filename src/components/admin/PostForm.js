@@ -5,6 +5,7 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import "../../css/post-form.css";
 import Repeater from "./Repeater";
 import Abcd from "./Abcd";
+import Estimate from "./Estimate";
 
 export default function PostForm() {
   const [questionType, setQuestionType] = React.useState({
@@ -42,9 +43,9 @@ export default function PostForm() {
         })}
       </select>
     );
-    setQuestion((oldQuestion)=>{
-      return {...oldQuestion, Question_type:selected[0]}
-    })
+    setQuestion((oldQuestion) => {
+      return { ...oldQuestion, Question_type: selected[0] };
+    });
   }, [questionType]);
 
   // COMMON
@@ -79,7 +80,9 @@ export default function PostForm() {
     setQuestion((oldQuestion) => {
       return {
         ...oldQuestion,
-        Explanation: convertToRaw(editorState.getCurrentContent()),
+        Explanation: JSON.stringify(
+          convertToRaw(editorState.getCurrentContent())
+        ),
       };
     });
   }, [editorState]);
@@ -88,9 +91,10 @@ export default function PostForm() {
   //essentially onChange for rich text editor 1
   React.useEffect(() => {
     setQuestion((oldQuestion) => {
+      console.log(convertToRaw(editor2State.getCurrentContent()));
       return {
         ...oldQuestion,
-        Sources: convertToRaw(editor2State.getCurrentContent()),
+        Sources: JSON.stringify(convertToRaw(editor2State.getCurrentContent())),
       };
     });
   }, [editor2State]);
@@ -99,12 +103,11 @@ export default function PostForm() {
   // handle FORM submit
   function handleSubmit(e) {
     e.preventDefault();
-    fetch(process.env.REACT_APP_CUSTOM_BACKEND_URL + "/questions", {
+    fetch(process.env.REACT_APP_CUSTOM_BACKEND_URL + "/api/questions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(question),
-    })
-      .then(res => console.log(res));
+    }).then((res) => console.log(res));
   }
 
   return (
@@ -124,17 +127,19 @@ export default function PostForm() {
               />
             </label>
           </div>
-          {questionType.abcd 
-          ? 
-          <Abcd
-            question={question}
-            setQuestion={setQuestion}
-            handleChange={handleChange}
-            inputState={inputState}
-            setInputState={setInputState}
-          />
-          : ""
-        }
+          {questionType.abcd ? (
+            <Abcd
+              question={question}
+              setQuestion={setQuestion}
+              handleChange={handleChange}
+              inputState={inputState}
+              setInputState={setInputState}
+            />
+          ) : questionType.estimate ? (
+            <Estimate question={question} handleChange={handleChange} />
+          ) : (
+            ""
+          )}
           <div className="form-label">Vysvětlení otázky:</div>
           <Editor
             editorState={editorState}

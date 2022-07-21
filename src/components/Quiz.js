@@ -2,6 +2,8 @@ import React from "react";
 import Question from "./Question";
 import Win from "./Win";
 import Empty from "./Empty";
+import { convertFromRaw } from "draft-js";
+import { stateToHTML } from "draft-js-export-html";
 
 export default function Quiz(props) {
   const [questions, setQuestions] = React.useState([]);
@@ -15,61 +17,54 @@ export default function Quiz(props) {
     JSON.parse(localStorage.getItem("pagination")) || 1
   );
   const [questionsEmpty, setQuestionsEmpty] = React.useState(false);
-
   // initialize question list
   function initialize() {
     setQuestionsEmpty(false);
-    fetch(
-      process.env.REACT_APP_SERVER_URL +
-        `/api/questions`
-    )
+    fetch(process.env.REACT_APP_SERVER_URL + `/api/questions`)
       .then((res) => res.json())
-      .then((data)=>{
-        console.log(data)
-        setQuestions(data)
-        return data
-      })
       .then((data) => {
-        setQuestions((oldQuestions) => {
-          return oldQuestions.map((question) => {
-            if (question.Question_type === "abcd") {
-              let answers = [...question.Wrong_answers]
-              answers.splice(
-                Math.floor(Math.random() * answers.length),
-                0,
-                question.Right_answer
-              );
-              return { ...question, allAnswers: answers };
-            } else {
-              return { ...question };
-            }
-          });
+        let dataAll = data.map((question) => {
+          if (question.Question_type === "abcd") {
+            let answers = [...question.Wrong_answers];
+            answers.splice(
+              Math.floor(Math.random() * answers.length),
+              0,
+              question.Right_answer
+            );
+            return { ...question, allAnswers: answers };
+          } else {
+            return { ...question };
+          }
         });
+        setQuestions(dataAll);
         if (!data.length) {
           setQuestionsEmpty(true);
         }
+        return data;
       });
   }
+
+  // responsible for 2 initial renders
   React.useEffect(() => {
     initialize();
   }, []);
 
-  console.log(questions);
   // question JSX elements
   React.useEffect(() => {
     setQuestionElements(
       questions.map((question) => {
-
         return (
           <Question
             questionType={question.Question_type}
             questionText={question.Question_text}
             // will have to convert from raw, -att
-            explanation={question.Explanation}
+            explanation={stateToHTML(convertFromRaw(JSON.parse(question.Explanation)))}
+            sources={stateToHTML(convertFromRaw(JSON.parse(question.Sources)))}
             questionID={questions.indexOf(question)}
             answers={question.allAnswers}
             isRight={isRight}
             qClicked={qClicked}
+            key={question._id}
           />
         );
       })
@@ -81,10 +76,7 @@ export default function Quiz(props) {
     event.preventDefault();
     let currentQ = questions[event.target.getAttribute("data-question")];
 
-    if (
-      event.target.getAttribute("data-value") ===
-      currentQ.Right_answer
-    ) {
+    if (event.target.getAttribute("data-value") === currentQ.Right_answer) {
       event.target.classList.add("right");
       setScore((prevScore) => {
         return prevScore + 1;
@@ -115,13 +107,26 @@ export default function Quiz(props) {
     } else if (clicked === 0) {
       setFinished(false);
     }
-  }, [clicked, numberOfQuestions]);
+  }, [clicked, numberOfQuestions, questions.length]);
 
   // restart the quiz
   function restart() {
     setPagination((oldPagination) => {
       return oldPagination + 1;
     });
+    setQClicked({});
+    let allQAnswers = document.querySelectorAll(
+        '.answer'
+      );
+      allQAnswers.forEach((a) => {
+        a.classList.remove("no-click");
+        a.classList.remove("wrong");
+        a.classList.remove("right");
+      });
+    initialize();
+    setFinished(false);
+    setScore(0);
+    setClicked(0);
   }
 
   // persist pagination
@@ -132,15 +137,20 @@ export default function Quiz(props) {
   function startAgain() {
     setPagination(1);
     setQClicked({});
-  }
-
-  React.useEffect(() => {
     initialize();
     setFinished(false);
     setScore(0);
     setClicked(0);
-    setQClicked({});
-  }, [pagination]);
+  }
+
+//   React.useEffect(() => {
+//     console.log("pagination chnages");
+//     initialize();
+//     setFinished(false);
+//     setScore(0);
+//     setClicked(0);
+//     setQClicked({});
+//   }, [pagination]);
 
   return (
     <div className="page flex items-center flex-col pl-5 pr-5">
