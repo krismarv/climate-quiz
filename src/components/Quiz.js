@@ -10,13 +10,14 @@ export default function Quiz(props) {
   const [questionElements, setQuestionElements] = React.useState("");
   const [qClicked, setQClicked] = React.useState({});
   const [score, setScore] = React.useState(0);
-  const [clicked, setClicked] = React.useState(0);
   const [finished, setFinished] = React.useState(false);
   const [numberOfQuestions, setNumberOfQuestions] = React.useState(10);
   const [pagination, setPagination] = React.useState(
     JSON.parse(localStorage.getItem("pagination")) || 1
   );
   const [questionsEmpty, setQuestionsEmpty] = React.useState(false);
+  const [correct, setIsCorrect] = React.useState("");
+
   // initialize question list
   function initialize() {
     setQuestionsEmpty(false);
@@ -55,16 +56,19 @@ export default function Quiz(props) {
       questions.map((question) => {
         return (
           <Question
-            questionType={question.Question_type}
-            questionText={question.Question_text}
             // will have to convert from raw, -att
             explanation={stateToHTML(convertFromRaw(JSON.parse(question.Explanation)))}
             sources={stateToHTML(convertFromRaw(JSON.parse(question.Sources)))}
             questionID={questions.indexOf(question)}
-            answers={question.allAnswers}
             isRight={isRight}
             qClicked={qClicked}
             key={question._id}
+            question={question}
+            setScore={setScore}
+            setQClicked={setQClicked}
+            finished={finished}
+            correct={correct}
+            setIsCorrect={setIsCorrect}
           />
         );
       })
@@ -72,6 +76,7 @@ export default function Quiz(props) {
   }, [questions, qClicked]);
 
   // right answer
+  // specific to abcd!!
   function isRight(event) {
     event.preventDefault();
     let currentQ = questions[event.target.getAttribute("data-question")];
@@ -81,10 +86,8 @@ export default function Quiz(props) {
       setScore((prevScore) => {
         return prevScore + 1;
       });
-      setClicked((oldClicked) => oldClicked + 1);
     } else {
       event.target.classList.add("wrong");
-      setClicked((oldClicked) => oldClicked + 1);
     }
     // remaining answers unclickable
     let allQAnswers = document.querySelectorAll(
@@ -102,12 +105,14 @@ export default function Quiz(props) {
 
   // winning
   React.useEffect(() => {
-    if (clicked === questions.length && clicked !== 0) {
+    if (Object.keys(qClicked).length === questions.length && Object.keys(qClicked).length !== 0) {
       setFinished(true);
-    } else if (clicked === 0) {
+    } else if (Object.keys(qClicked).length === 0) {
       setFinished(false);
     }
-  }, [clicked, numberOfQuestions, questions.length]);
+  }, [qClicked, numberOfQuestions, questions.length]);
+
+  console.log(qClicked)
 
   // restart the quiz
   function restart() {
@@ -123,10 +128,14 @@ export default function Quiz(props) {
         a.classList.remove("wrong");
         a.classList.remove("right");
       });
+    let rangeInputs = document.querySelectorAll('.range-input')
+    rangeInputs.forEach((r)=>{
+        r.classList.remove("no-click")
+    })
     initialize();
     setFinished(false);
     setScore(0);
-    setClicked(0);
+    setIsCorrect("")
   }
 
   // persist pagination
@@ -140,9 +149,9 @@ export default function Quiz(props) {
     initialize();
     setFinished(false);
     setScore(0);
-    setClicked(0);
+    setIsCorrect("")
   }
-
+//// used previously for start again above
 //   React.useEffect(() => {
 //     console.log("pagination chnages");
 //     initialize();
