@@ -46,7 +46,7 @@ export default function Estimate(props) {
           }}
           id={`range-${props.id}`}
         ></input>
-        <div class="current-value text-xl font-semibold mt-5  w-12 h-12">{estimate}</div>
+        <div className="current-value text-xl font-semibold mt-5  w-12 h-12">{estimate}</div>
       </div>
       {props.correct === "" ? (
         <button className="mt-5 text-base inline-flex" onClick={isRight} data-id={props.id}>

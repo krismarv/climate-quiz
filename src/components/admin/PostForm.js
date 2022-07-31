@@ -4,6 +4,7 @@ import { EditorState, convertFromRaw, convertToRaw } from "draft-js";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import "../../css/post-form.css";
 import Repeater from "./Repeater";
+import Tags from "./Tags";
 import Abcd from "./Abcd";
 import Estimate from "./Estimate";
 
@@ -113,8 +114,11 @@ export default function PostForm() {
   return (
     <>
       <div className="post-form">
-        <h2>Vyberte typ otázky:</h2>
-        {selectElement}
+        <div className="choose-type flex bg-yellow-200 p-4 rounded-md">
+          <h2 className="mr-5">Vyberte typ otázky:</h2>
+          {selectElement}
+        </div>
+
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <label>
@@ -156,6 +160,7 @@ export default function PostForm() {
             editorClassName="wysiwyg-editor"
             onEditorStateChange={setEditor2State}
           />
+          <Tags question={question} setQuestion={setQuestion}/>
           <input type="submit" className="form-submit"></input>
         </form>
       </div>

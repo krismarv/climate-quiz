@@ -7,11 +7,15 @@ import Main from "./components/Main"
 import Layout from "./components/Layout";
 import Quiz from './components/Quiz';
 import NotFound from './components/404';
-import PostForm from "./components/admin/PostForm"
+import PostForm from "./components/admin/PostForm";
+import Login from "./components/admin/Login";
+import useToken from './app/useToken';
 
 function App() {
-  
 
+  // const { token, setToken } = useToken();
+  // console.log(token);
+  // React.useEffect(()=>{console.log(token)},[token])
 
   return (
     <>

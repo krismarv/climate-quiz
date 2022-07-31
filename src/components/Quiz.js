@@ -21,7 +21,9 @@ export default function Quiz(props) {
   // initialize question list
   function initialize() {
     setQuestionsEmpty(false);
-    fetch(process.env.REACT_APP_SERVER_URL + `/api/questions`)
+    console.log("fetching")
+    console.log(process.env.REACT_APP_SERVER_URL + `/api/questions?page=${pagination}&limit=${numberOfQuestions}`)
+    fetch(process.env.REACT_APP_SERVER_URL + `/api/questions?page=${pagination}&limit=${numberOfQuestions}`)
       .then((res) => res.json())
       .then((data) => {
         let dataAll = data.map((question) => {
@@ -88,14 +90,22 @@ export default function Quiz(props) {
     }
   }, [qClicked, numberOfQuestions, questions.length]);
 
-  console.log(qClicked);
-
   // restart the quiz
   function restart() {
     setPagination((oldPagination) => {
       return oldPagination + 1;
     });
-    setQClicked({});
+    // setQClicked({});
+    
+    // initialize();
+    // setFinished(false);
+    // setScore(0);
+    // setIsCorrect("");
+  }
+
+  // persist pagination
+  React.useEffect(() => {
+    localStorage.setItem("pagination", JSON.stringify(pagination));
     let allQAnswers = document.querySelectorAll(".answer");
     allQAnswers.forEach((a) => {
       a.classList.remove("no-click");
@@ -107,23 +117,15 @@ export default function Quiz(props) {
       r.classList.remove("no-click");
     });
     initialize();
+    setQClicked({});
     setFinished(false);
     setScore(0);
     setIsCorrect("");
-  }
-
-  // persist pagination
-  React.useEffect(() => {
-    localStorage.setItem("pagination", JSON.stringify(pagination));
   }, [pagination]);
 
   function startAgain() {
     setPagination(1);
-    setQClicked({});
-    initialize();
-    setFinished(false);
-    setScore(0);
-    setIsCorrect("");
+    console.log("setting pagination")
   }
 
   return (

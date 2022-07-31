@@ -6,7 +6,7 @@
     max-width:1000px
 }
 .post-form input {
-    border:solid .5px #f1f1f1 !important;
+    border:solid .5px #f1f1f1;
     border-radius:5px;
     margin:0px 10px;
     min-width:50vw;
@@ -56,4 +56,19 @@
 }
 .rdw-editor-toolbar {
     margin-bottom:0px
+}
+input:focus-visible {
+    appearance: none;
+    border:none !important;
+    border-style: none !important;
+    outline: none;
+}
+.tag-input {
+    min-width:15rem !important; 
+    max-width:fit-content !important;
+    border:0px !important;
+    width:auto
+}
+.tag-active {
+    color:blue
 }

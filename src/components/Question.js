@@ -5,7 +5,6 @@ import Abcd from "./question-elements/Abcd";
 import Estimate from "./question-elements/Estimate";
 
 const Question = React.memo(function Question(props) {
-  console.log(props.question.Question_type);
   let answerElements;
   switch (props.question.Question_type) {
     case "abcd":
