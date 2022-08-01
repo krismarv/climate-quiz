@@ -2,6 +2,7 @@ import React from "react";
 import "../../css/login.css";
 import x from "../../x-gray.png";
 import Emoji from "../Emoji";
+import Preloader from "../Preloader";
 
 export default function Login(props) {
   function handleChange(e) {
@@ -22,7 +23,7 @@ export default function Login(props) {
             props.setLoginVisible(false);
           }}
         ></img>
-        <form>
+        <form className="flex flex-col items-center">
           <div className="input-container">
             <input
               name="userName"
@@ -50,6 +51,7 @@ export default function Login(props) {
           ) : (
             ""
           )}
+          {props.preLoader ? <Preloader /> : ""}
           <button
             type="submit"
             className="bg-logo"

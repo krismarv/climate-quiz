@@ -2,8 +2,10 @@ import React from "react";
 import Question from "./Question";
 import Win from "./Win";
 import Empty from "./Empty";
+import Preloader from "./Preloader";
 import { convertFromRaw } from "draft-js";
 import { stateToHTML } from "draft-js-export-html";
+
 
 export default function Quiz(props) {
   const [questions, setQuestions] = React.useState([]);
@@ -17,15 +19,16 @@ export default function Quiz(props) {
   );
   const [questionsEmpty, setQuestionsEmpty] = React.useState(false);
   const [correct, setIsCorrect] = React.useState("");
+  const [preLoader, setPreLoader] = React.useState(false)
 
   // initialize question list
   function initialize() {
     setQuestionsEmpty(false);
-    console.log("fetching")
-    console.log(process.env.REACT_APP_SERVER_URL + `/api/questions?page=${pagination}&limit=${numberOfQuestions}`)
+    setPreLoader(true)
     fetch(process.env.REACT_APP_SERVER_URL + `/api/questions?page=${pagination}&limit=${numberOfQuestions}`)
       .then((res) => res.json())
       .then((data) => {
+        setPreLoader(false)
         let dataAll = data.map((question) => {
           if (question.Question_type === "abcd") {
             let answers = [...question.Wrong_answers];
@@ -130,6 +133,7 @@ export default function Quiz(props) {
 
   return (
     <div className="page flex items-center flex-col pl-5 pr-5">
+      {preLoader ?  <Preloader/> : ""}
       {questionElements}
       {finished ? (
         <Win

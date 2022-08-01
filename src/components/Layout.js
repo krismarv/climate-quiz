@@ -3,6 +3,7 @@ import Nav from "../components/Nav";
 import { Outlet } from "react-router-dom";
 import Login from "./admin/Login";
 import useToken from "../app/useToken";
+import { Preloader } from "./Preloader";
 
 export default function Layout() {
   const [loginVisible, setLoginVisible] = React.useState(false);
@@ -12,19 +13,27 @@ export default function Layout() {
     password: "",
   });
   const [error, setError] = React.useState("");
+  const [preLoader, setpreLoader] = React.useState(false);
+  
 
+  // sets token, could be a separate auth module
   function login(e) {
     e.preventDefault();
+    setpreLoader(true);
+    setError(null);
     fetch(process.env.REACT_APP_CUSTOM_BACKEND_URL + "/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(loginForm),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        setpreLoader(false);
+        return res.json();
+      })
       .then((data) => {
         if (data.token) setToken(data.token);
-        else if (data.error) throw new Error (data.error)
-        data?.token ? setLoginVisible(false) : setLoginVisible(true)
+        else if (data.error) throw new Error(data.error);
+        data?.token ? setLoginVisible(false) : setLoginVisible(true);
       })
       .catch((err) => setError(err.message));
   }
@@ -39,6 +48,7 @@ export default function Layout() {
           setLoginForm={setLoginForm}
           loginForm={loginForm}
           error={error}
+          preLoader={preLoader}
         />
       ) : (
         ""
@@ -49,6 +59,7 @@ export default function Layout() {
           <a
             className="cursor-pointer"
             onClick={() => {
+              setError(null);
               setLoginVisible(true);
             }}
           >
