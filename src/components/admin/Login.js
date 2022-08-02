@@ -5,7 +5,6 @@ import Emoji from "../Emoji";
 import Preloader from "../Preloader";
 
 export default function Login(props) {
-  console.log(typeof props.setToken);
   const [loginForm, setLoginForm] = React.useState({
     userName: "",
     password: "",

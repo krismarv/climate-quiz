@@ -14,6 +14,7 @@ const authContext = React.createContext(null);
 
 function App() {
   const { token, setToken } = useToken();
+  console.log(token)
   return (
     <>
       <BrowserRouter>

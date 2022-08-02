@@ -6,6 +6,7 @@ import { authContext } from "../App";
 export default function Nav(props) {
   const contToken = React.useContext(authContext);
   const [openNav, setOpenNav] = React.useState(false);
+  const [navElements, setNavElements] = React.useState()
 
   React.useEffect(() => {
     let body = document.querySelector("body");
@@ -13,6 +14,20 @@ export default function Nav(props) {
     else body.classList.remove("no-scroll");
   }, [props.loginVisible]);
 
+  // nav elements
+  React.useEffect(() => {
+    let navs;
+    if (contToken) {
+      navs = [{ name: "Post questions", link: "/post-questions" }];
+    } else {
+      navs = []
+    }
+    setNavElements(navs?.map((el)=>{
+      return (
+        <a href={el.link}>{el.name}</a>
+      )
+    }))
+  }, [contToken]);
 
   // conditional login link
   function LoginLink() {
@@ -30,7 +45,7 @@ export default function Nav(props) {
     } else {
       return (
         <a
-          className="cursor-pointer"
+          className="cursor-pointer border-logo border-b-4 uppercase font-bold ml-5"
           onClick={() => {
             props.setToken("");
             localStorage.removeItem("token");
@@ -81,14 +96,14 @@ export default function Nav(props) {
               )}
             </button>
             {openNav && (
-              <div className="mobile-menu bg-white w-full absolute top-10 left-0 shadow-sm p-5 z-50 flex justify-end font-semibold text-lg">
-                <a>LKNlknlkv</a>
+              <div className="mobile-menu bg-white w-full absolute top-10 left-0 shadow-sm p-5 z-50 flex justify-end font-semibold text-md">
+                {navElements}
                 <LoginLink />
               </div>
             )}
           </div>
-          <div className="hidden md:block md:ml-10 md:pr-4 md:space-x-8">
-            {contToken ? <a>Post questions</a> : <></>}
+          <div className="hidden md:block md:ml-10 md:pr-4 md:space-x-8 font-semibold text-md">
+            {navElements}
             <LoginLink />
           </div>
         </nav>
