@@ -13,3 +13,7 @@
     min-height:2.2rem;
     padding:0px 5px
 }
+.no-scroll {
+    height:100%;
+    overflow:hidden
+}

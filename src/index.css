@@ -34,6 +34,10 @@ button {
   border-radius:100px !important;
   color:white !important;
 }
+nav button {
+  color:#333333 !important;
+  background-color: transparent !important;
+}
 .pale {
   background-color:#e2a9ae
 }
