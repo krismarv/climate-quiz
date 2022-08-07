@@ -18,7 +18,7 @@ export default function Nav(props) {
   React.useEffect(() => {
     let navs;
     if (contToken) {
-      navs = [{ name: "Post questions", link: "/post-questions" }];
+      navs = [{ name: "Admin", link: "/admin" }];
     } else {
       navs = []
     }

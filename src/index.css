@@ -10,7 +10,30 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
+h1 {
+  font-size:2rem;
+  font-weight:500
+}
+h2 {
+  font-size:1.8rem;
+  font-weight:500
+}
+h3 {
+  font-size:1.7rem;
+  font-weight:500
+}
+h4 {
+  font-size:1.5rem;
+  font-weight:500
+}
+h5 {
+  font-size:1.2rem;
+  font-weight:500
+}
+h6 {
+  font-size:1rem;
+  font-weight:500
+}
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
@@ -22,7 +45,7 @@ a.no-bottom, button a {
   border-bottom:none
 }
 button {
-  background-color:#db8c92;
+  background-color:#db8c92 !important;
   font-family:"Red Hat Mono";
   height:2rem !important;
   padding:25px 35px;

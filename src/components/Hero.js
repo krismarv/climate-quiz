@@ -35,8 +35,8 @@ import { authContext } from "../App";export default function Example() {
                   </a>
                 </button>
                 <button className="pale">
-                  <a href="#" className="">
-                    Výběr otázek
+                  <a href="/lectures" className="">
+                    Lekce
                   </a>
                 </button>
               </div>

@@ -72,3 +72,13 @@ input:focus-visible {
 .tag-active {
     color:blue
 }
+.post-form .active {
+    font-weight: 600;
+    color:blue
+}
+.check-button {
+    display:flex;
+    justify-content: center;
+    background-color:rgb(231, 221, 221) !important;
+    color:#333333 !important
+}

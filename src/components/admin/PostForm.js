@@ -113,9 +113,8 @@ export default function PostForm() {
 
   return (
     <>
-      <div className="post-form">
         <div className="choose-type flex bg-yellow-200 p-4 rounded-md">
-          <h2 className="mr-5">Vyberte typ otázky:</h2>
+          <div className="mr-5">Vyberte typ otázky:</div>
           {selectElement}
         </div>
 
@@ -163,7 +162,6 @@ export default function PostForm() {
           <Tags question={question} setQuestion={setQuestion}/>
           <input type="submit" className="form-submit"></input>
         </form>
-      </div>
     </>
   );
 }

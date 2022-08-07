@@ -9,12 +9,15 @@ import NotFound from "./components/404";
 import PostForm from "./components/admin/PostForm";
 import useToken from "./app/useToken";
 import NotLoggedIn from "./components/NotLoggedIn";
+import LectureRouter from "./components/lectures/LectureRouter";
+import PostLecture from "./components/admin/PostLecture";
+import AdminRouter from "./components/admin/AdminRouter";
 
 const authContext = React.createContext(null);
 
 function App() {
   const { token, setToken } = useToken();
-  console.log(token)
+  console.log(token);
   return (
     <>
       <BrowserRouter>
@@ -27,10 +30,8 @@ function App() {
               <Route path="*" element={<NotFound />} />
               <Route index element={<Main />} />
               <Route path="quiz" element={<Quiz />} />
-              <Route
-                path="post-questions"
-                element={token ? <PostForm /> : <NotLoggedIn />}
-              />
+              <Route path="admin/*" element={token ? <AdminRouter /> : <NotLoggedIn />} />
+              <Route path="lectures/*" element={<LectureRouter />} />
             </Route>
           </Routes>
         </authContext.Provider>
@@ -39,7 +40,4 @@ function App() {
   );
 }
 
-export {
-  App, 
-  authContext
-};
+export { App, authContext };
