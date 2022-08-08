@@ -6,6 +6,8 @@ export default function LectureList() {
   const [lectureList, setLectureList] = React.useState([]);
   const [preloader, setPreloader] = React.useState(false)
 
+  
+
   React.useEffect(() => {
     setPreloader(true)
     fetch(process.env.REACT_APP_SERVER_URL + "/api/lectures")
@@ -18,12 +20,12 @@ export default function LectureList() {
   }, []);
   return (
     <>
-    <h1 className="text-6xl text-right mb-9">Všechno, co potřebujete vědět o <strong>změně klimatu <Emoji label="planet" symbol="🌍"/></strong></h1>
+    <h1 className="text-4xl mb-9">Změna klimatu - <span className="font-handwritten">témata</span><Emoji label="planet" symbol="🌍"/></h1>
     {preloader ? <div className="flex justify-center"><Preloader/></div> : ""}
       {lectureList.map((l) => {
         return (
           <div className="text-lg font-medium">
-            <a className="text-2xl text-gray-700"href={`/lectures/${l.number}`}>{l.number + ". " + l.name}</a>
+            <a className="text-xl text-gray-700 inline-block mb-5"href={`/lectures/${l.number}`}>{l.number + ". " + l.name}</a>
           </div>
         );
       })}

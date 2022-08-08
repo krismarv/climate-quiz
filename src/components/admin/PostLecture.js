@@ -7,17 +7,29 @@ import "../../css/post-form.css";
 import Question from "../Question";
 import Emoji from "../Emoji";
 import xImage from "../../x.png";
+import TiptapMenu from "../TiptapMenu";
+import { EditorContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
 
 export default function PostLecture() {
-  const [editorState, setEditorState] = React.useState(
-    EditorState.createEmpty()
-  );
+  const [editorContent, setEditorContent] = React.useState();
   const [questions, setQuestions] = React.useState();
   const [questionOptions, setQuestionOptions] = React.useState();
   const [activeQuestion, setActiveQuestion] = React.useState("");
   const [active, setActive] = React.useState(false);
   const [selectedQuestions, setSelectedQuestions] = React.useState([]);
   const [input, setInput] = React.useState({});
+
+  const editor = useEditor({
+    extensions: [StarterKit],
+    content: `
+      <h2>
+        Hi there,
+      </h2>
+    `,
+    onUpdate({ editor }) {
+      setEditorContent(editor.getJSON());}
+  });
 
   // load questions, create question elements
   React.useEffect(() => {
@@ -85,14 +97,14 @@ export default function PostLecture() {
       };
     });
   }
-  React.useEffect(() => {
-    setInput((old) => {
-      return {
-        ...old,
-        Text: JSON.stringify(convertToRaw(editorState.getCurrentContent())),
-      };
-    });
-  }, [editorState]);
+  // React.useEffect(() => {
+  //   setInput((old) => {
+  //     return {
+  //       ...old,
+  //       Text: JSON.stringify(convertToRaw(editorState.getCurrentContent())),
+  //     };
+  //   });
+  // }, [editorState]);
   React.useEffect(() => {
     setInput((old) => {
       return {
@@ -101,6 +113,15 @@ export default function PostLecture() {
       };
     });
   }, [selectedQuestions]);
+
+  React.useEffect(()=>{
+    setInput((old)=>{
+      return {
+        ...old, 
+        Text: editorContent
+      }
+    })
+  }, [editorContent])
 
   function formSubmit(e) {
     e.preventDefault();
@@ -115,8 +136,14 @@ export default function PostLecture() {
       <label htmlFor="number" className="mr-5">
         Číslo přednášky
       </label>
-      <input type="number" name="number" step="1" min="1" value={input.number}
-        onChange={handleInputChange}></input>
+      <input
+        type="number"
+        name="number"
+        step="1"
+        min="1"
+        value={input.number}
+        onChange={handleInputChange}
+      ></input>
       <label htmlFor="lecture-name" className="mr-5">
         Jméno přednášky
       </label>
@@ -128,18 +155,24 @@ export default function PostLecture() {
         onChange={handleInputChange}
       ></input>
       <div className="form-label">Text:</div>
-      <Editor
+      {/* <Editor
         editorState={editorState}
         toolbarClassName="toolbarClassName"
         wrapperClassName="wrapperClassName"
         editorClassName="wysiwyg-editor"
         onEditorStateChange={setEditorState}
-      />
-      <div
+      /> */}
+      <div className="editor-wrapper">
+        <TiptapMenu editor={editor} />
+        <EditorContent editor={editor} />
+        {editor&&editor.getHTML()}
+      </div>
+
+      {/* <div
         dangerouslySetInnerHTML={{
           __html: draftToHtml(convertToRaw(editorState.getCurrentContent())),
         }}
-      ></div>
+      ></div> */}
       <label htmlFor="question-select">Vybrat otázku</label>
       <div name="question-select" className="bg-white p-5 overflow-scroll h-32">
         {questionOptions}

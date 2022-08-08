@@ -11,7 +11,8 @@ module.exports = {
         "neutral": "#F4F4ED"
       },
       fontFamily: {
-        logo: ['Red Hat Mono']
+        logo: ['Red Hat Mono'], 
+        handwritten: ["Sedgwick Ave"]
       }
     }
   },
