@@ -8,6 +8,14 @@ const MenuBar = ({ editor }) => {
     return null
   }
 
+  const addImage = () => {
+    const url = window.prompt('URL')
+
+    if (url) {
+      editor.chain().focus().setImage({ src: url }).run()
+    }
+  }
+
   return (
     <>
       <button type="button"
@@ -34,6 +42,7 @@ const MenuBar = ({ editor }) => {
       >
         code
       </button>
+      <button type="button" onClick={addImage} className="tiptap-button">add image from URL</button>
       <button type="button" className="tiptap-button" onClick={() => editor.chain().focus().unsetAllMarks().run()}>
         clear marks
       </button>

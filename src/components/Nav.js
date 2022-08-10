@@ -18,9 +18,9 @@ export default function Nav(props) {
   React.useEffect(() => {
     let navs;
     if (contToken) {
-      navs = [{ name: "Admin", link: "/admin", class: "admin-link border-b-4 border-gray-500 uppercase font-bold" }];
+      navs = [{name: "Kvíz", link:"/quiz"}, {name: "Lekce", link:"/lectures"},{ name: "Admin", link: "/admin", class: "admin-link border-b-4 border-gray-500 uppercase font-bold" }];
     } else {
-      navs = []
+      navs = [{name: "Kvíz", link:"/quiz"}, {name: "Lekce", link:"/lectures"}]
     }
     setNavElements(navs?.map((el)=>{
       return (

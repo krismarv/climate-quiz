@@ -37,13 +37,13 @@ const Question = React.memo(function Question(props) {
   }
   // ok!!
   return (
-    <div className="question-container w-full max-w-4xl m-2 p-4 bg-neutral rounded-md">
+    <div className="question-container w-11/12 max-w-4xl m-2 p-4 bg-neutral rounded-md">
       <div className="question-text font-semibold mb-3 text-lg">
         {props.question.Question_text}
       </div>
       {answerElements}
       {props.qClicked[props.questionID] && props.explanation ? (
-        <Explanation explanation={props.explanation} sources={props.sources} />
+        <Explanation question={props.question}/>
       ) : (
         ""
       )}

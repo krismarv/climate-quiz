@@ -62,10 +62,8 @@ export default function Quiz(props) {
         return (
           <Question
             // will have to convert from raw, -att
-            explanation={stateToHTML(
-              convertFromRaw(JSON.parse(question.Explanation))
-            )}
-            sources={stateToHTML(convertFromRaw(JSON.parse(question.Sources)))}
+            explanation={"jj"}
+            sources={"question.Sources"}
             questionID={questions.indexOf(question)}
             qClicked={qClicked}
             key={question._id}
@@ -140,6 +138,7 @@ export default function Quiz(props) {
           score={score}
           numberOfQuestions={questions.length}
           restart={restart}
+          restartButtons={true}
         />
       ) : (
         ""

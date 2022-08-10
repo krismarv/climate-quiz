@@ -8,11 +8,13 @@ module.exports = {
     extend: {
       colors: {
         'logo': '#DB8C92', 
-        "neutral": "#F4F4ED"
+        "neutral": "#F4F4ED",
+        "alabaster": "#EFEFE6", 
+        "dark": "#577399"
       },
       fontFamily: {
         logo: ['Red Hat Mono'], 
-        handwritten: ["Sedgwick Ave"]
+        handwritten: ["Fuzzy Bubbles"]
       }
     }
   },

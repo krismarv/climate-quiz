@@ -10,7 +10,7 @@ export default function LectureRouter() {
   },[])
   return (
     <div className="page flex  flex-col items-center justify-center w-full pl-5 pr-5">
-      <div className="lecture-container w-full max-w-4xl m-2 p-4 bg-neutral rounded-md">
+      <div className="lecture-container w-full max-w-4xl m-2 p-4 bg-alabaster rounded-md">
         <Routes>
           <Route path="" element={<LectureList/>}/>
           <Route path=":no" element={<LectureSingle/>}/>

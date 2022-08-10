@@ -1,8 +1,4 @@
 import React from "react";
-import { Editor } from "react-draft-wysiwyg";
-import { EditorState, convertFromRaw, convertToRaw } from "draft-js";
-import { stateToHTML } from "draft-js-export-html";
-import draftToHtml from "draftjs-to-html";
 import "../../css/post-form.css";
 import Question from "../Question";
 import Emoji from "../Emoji";
@@ -10,6 +6,7 @@ import xImage from "../../x.png";
 import TiptapMenu from "../TiptapMenu";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import Image from "@tiptap/extension-image";
 
 export default function PostLecture() {
   const [editorContent, setEditorContent] = React.useState();
@@ -21,14 +18,15 @@ export default function PostLecture() {
   const [input, setInput] = React.useState({});
 
   const editor = useEditor({
-    extensions: [StarterKit],
+    extensions: [StarterKit, Image],
     content: `
       <h2>
         Hi there,
       </h2>
     `,
     onUpdate({ editor }) {
-      setEditorContent(editor.getJSON());}
+      setEditorContent(editor.getJSON());
+    },
   });
 
   // load questions, create question elements
@@ -97,14 +95,7 @@ export default function PostLecture() {
       };
     });
   }
-  // React.useEffect(() => {
-  //   setInput((old) => {
-  //     return {
-  //       ...old,
-  //       Text: JSON.stringify(convertToRaw(editorState.getCurrentContent())),
-  //     };
-  //   });
-  // }, [editorState]);
+
   React.useEffect(() => {
     setInput((old) => {
       return {
@@ -114,14 +105,14 @@ export default function PostLecture() {
     });
   }, [selectedQuestions]);
 
-  React.useEffect(()=>{
-    setInput((old)=>{
+  React.useEffect(() => {
+    setInput((old) => {
       return {
-        ...old, 
-        Text: editorContent
-      }
-    })
-  }, [editorContent])
+        ...old,
+        Text: editorContent,
+      };
+    });
+  }, [editorContent]);
 
   function formSubmit(e) {
     e.preventDefault();
@@ -155,24 +146,12 @@ export default function PostLecture() {
         onChange={handleInputChange}
       ></input>
       <div className="form-label">Text:</div>
-      {/* <Editor
-        editorState={editorState}
-        toolbarClassName="toolbarClassName"
-        wrapperClassName="wrapperClassName"
-        editorClassName="wysiwyg-editor"
-        onEditorStateChange={setEditorState}
-      /> */}
+
       <div className="editor-wrapper">
         <TiptapMenu editor={editor} />
         <EditorContent editor={editor} />
-        {editor&&editor.getHTML()}
       </div>
 
-      {/* <div
-        dangerouslySetInnerHTML={{
-          __html: draftToHtml(convertToRaw(editorState.getCurrentContent())),
-        }}
-      ></div> */}
       <label htmlFor="question-select">Vybrat otázku</label>
       <div name="question-select" className="bg-white p-5 overflow-scroll h-32">
         {questionOptions}

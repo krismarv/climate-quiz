@@ -7,22 +7,36 @@ import Repeater from "./Repeater";
 import Tags from "./Tags";
 import Abcd from "./Abcd";
 import Estimate from "./Estimate";
+import TiptapMenu from "../TiptapMenu";
+import { EditorContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
 
 export default function PostForm() {
   const [questionType, setQuestionType] = React.useState({
     abcd: false,
-    estimate: false,
-    match: true,
+    estimate: true,
+    // match: true,
   });
   const [selectElement, setSelectElement] = React.useState(<></>);
   const [question, setQuestion] = React.useState({});
-  const [editorState, setEditorState] = React.useState(
-    EditorState.createEmpty()
-  );
-  const [editor2State, setEditor2State] = React.useState(
-    EditorState.createEmpty()
-  );
   const [inputState, setInputState] = React.useState({ 0: "" });
+  const [editorContent, setEditorContent] = React.useState();
+  const [editor2Content, setEditor2Content] = React.useState();
+
+  const editor1 = useEditor({
+    extensions: [StarterKit, Image],
+    content: ``,
+    onUpdate({ editor }) {
+      setEditorContent(editor.getJSON());
+    },
+  });
+  const editor2 = useEditor({
+    extensions: [StarterKit, Image],
+    content: ``,
+    onUpdate({ editor }) {
+      setEditor2Content(editor.getJSON());
+    },
+  });
 
   //  COMMON
   // select question type elements
@@ -81,24 +95,21 @@ export default function PostForm() {
     setQuestion((oldQuestion) => {
       return {
         ...oldQuestion,
-        Explanation: JSON.stringify(
-          convertToRaw(editorState.getCurrentContent())
-        ),
+        Explanation: editorContent
       };
     });
-  }, [editorState]);
+  }, [editorContent]);
 
   // COMMON
   //essentially onChange for rich text editor 1
   React.useEffect(() => {
     setQuestion((oldQuestion) => {
-      console.log(convertToRaw(editor2State.getCurrentContent()));
       return {
         ...oldQuestion,
-        Sources: JSON.stringify(convertToRaw(editor2State.getCurrentContent())),
+        Sources: editor2Content,
       };
     });
-  }, [editor2State]);
+  }, [editor2Content]);
 
   // COMMON
   // handle FORM submit
@@ -107,61 +118,56 @@ export default function PostForm() {
     fetch(process.env.REACT_APP_CUSTOM_BACKEND_URL + "/api/questions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(question),
+      body: JSON.stringify({ question }),
     }).then((res) => console.log(res));
   }
 
+  console.log(editor2Content)
   return (
     <>
-        <div className="choose-type flex bg-yellow-200 p-4 rounded-md">
-          <div className="mr-5">Vyberte typ otázky:</div>
-          {selectElement}
-        </div>
+      <div className="choose-type flex bg-yellow-200 p-4 rounded-md">
+        <div className="mr-5">Vyberte typ otázky:</div>
+        {selectElement}
+      </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className="input-group">
-            <label>
-              Znění otázky:
-              <input
-                type="text"
-                name="Question_text"
-                value={question.Question_text || ""}
-                onChange={handleChange}
-              />
-            </label>
-          </div>
-          {questionType.abcd ? (
-            <Abcd
-              question={question}
-              setQuestion={setQuestion}
-              handleChange={handleChange}
-              inputState={inputState}
-              setInputState={setInputState}
+      <form onSubmit={handleSubmit}>
+        <div className="input-group">
+          <label>
+            Znění otázky:
+            <input
+              type="text"
+              name="Question_text"
+              value={question.Question_text || ""}
+              onChange={handleChange}
             />
-          ) : questionType.estimate ? (
-            <Estimate question={question} handleChange={handleChange} />
-          ) : (
-            ""
-          )}
-          <div className="form-label">Vysvětlení otázky:</div>
-          <Editor
-            editorState={editorState}
-            toolbarClassName="toolbarClassName"
-            wrapperClassName="wrapperClassName"
-            editorClassName="wysiwyg-editor"
-            onEditorStateChange={setEditorState}
+          </label>
+        </div>
+        {questionType.abcd ? (
+          <Abcd
+            question={question}
+            setQuestion={setQuestion}
+            handleChange={handleChange}
+            inputState={inputState}
+            setInputState={setInputState}
           />
-          <div className="form-label">Zdroje:</div>
-          <Editor
-            editorState={editor2State}
-            toolbarClassName="toolbarClassName"
-            wrapperClassName="wrapperClassName"
-            editorClassName="wysiwyg-editor"
-            onEditorStateChange={setEditor2State}
-          />
-          <Tags question={question} setQuestion={setQuestion}/>
-          <input type="submit" className="form-submit"></input>
-        </form>
+        ) : questionType.estimate ? (
+          <Estimate question={question} handleChange={handleChange} />
+        ) : (
+          ""
+        )}
+        <div className="form-label">Vysvětlení otázky:</div>
+        <div className="editor-wrapper">
+          <TiptapMenu editor={editor1} />
+          <EditorContent editor={editor1} />
+        </div>
+        <div className="form-label">Zdroje:</div>
+        <div className="editor-wrapper">
+          <TiptapMenu editor={editor2} />
+          <EditorContent editor={editor2} />
+        </div>
+        <Tags question={question} setQuestion={setQuestion} />
+        <input type="submit" className="form-submit"></input>
+      </form>
     </>
   );
 }

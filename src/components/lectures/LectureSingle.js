@@ -5,12 +5,18 @@ import { useParams } from "react-router-dom";
 import Error from "../Error";
 import { useLocation } from "react-router-dom";
 import { generateHTML } from "@tiptap/html";
-import Document from "@tiptap/extension-document";
-import Text from "@tiptap/extension-text";
-import Paragraph from "@tiptap/extension-paragraph";
-import Bold from "@tiptap/extension-bold";
-import Italic from "@tiptap/extension-italic";
-import Heading from "@tiptap/extension-heading";
+// import Document from "@tiptap/extension-document";
+// import Text from "@tiptap/extension-text";
+// import Paragraph from "@tiptap/extension-paragraph";
+// import Bold from "@tiptap/extension-bold";
+// import Italic from "@tiptap/extension-italic";
+// import Heading from "@tiptap/extension-heading";
+import Image from "@tiptap/extension-image";
+import StarterKit from "@tiptap/starter-kit";
+import Preloader from "../Preloader";
+import Question from "../Question";
+import Emoji from "../Emoji";
+import Win from "../Win";
 
 export default function LectureSingle() {
   const [lectureNo, setLectureNo] = React.useState();
@@ -19,13 +25,19 @@ export default function LectureSingle() {
   const [useLoc, setUseLoc] = React.useState(useLocation().pathname);
   const [textOutput, setTextOutput] = React.useState();
   const [noArray, setNoArray] = React.useState();
-  const [displayChevron, setDisplayChevron] = React.useState({
-    left: true,
-    right: true,
-  });
+  const [preloader, setPreloader] = React.useState(false);
+  const [questionData, setQuestionData] = React.useState();
+  const [questionElements, setQuestionElements] = React.useState();
+
+  // question states
+  const [qClicked, setQClicked] = React.useState({});
+  const [finished, setFinished] = React.useState(false);
+  const [correct, setIsCorrect] = React.useState("");
+  const [score, setScore] = React.useState(0);
 
   // get all lecture numbers
   React.useEffect(() => {
+    setPreloader(true);
     fetch(process.env.REACT_APP_SERVER_URL + "/api/lectures/lecture-numbers")
       .then((res) => res.json())
       .then((data) => setNoArray(data.data));
@@ -52,15 +64,18 @@ export default function LectureSingle() {
             setError(true);
           } else if (data.data) {
             setError(false);
+            console.log(data.data);
             setLectureData(data.data);
+            setPreloader(false);
             setTextOutput(
               generateHTML(data.data.Text, [
-                Document,
-                Text,
-                Paragraph,
-                Bold,
-                Italic,
-                Heading,
+                StarterKit,
+                Image.configure({
+                  HTMLAttributes: {
+                    class: "inline-image",
+                  },
+                  inline: true,
+                }),
               ])
             );
           }
@@ -68,15 +83,110 @@ export default function LectureSingle() {
     }
   }, [lectureNo]);
 
+  React.useEffect(() => {
+    if (lectureData) {
+      if (lectureData.Questions.length) {
+        fetch(
+          process.env.REACT_APP_SERVER_URL +
+            `/api/questions?questions=${JSON.stringify(lectureData.Questions)}`
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            let dataAll = data.map((q) => {
+              if (q.Question_type === "abcd") {
+                let answers = [...q.Wrong_answers];
+                answers.splice(
+                  Math.floor(Math.random() * answers.length),
+                  0,
+                  q.Right_answer
+                );
+                return {
+                  ...q,
+                  allAnswers: answers,
+                };
+              } else {
+                return { ...q };
+              }
+            });
+            setQuestionData(dataAll);
+          });
+      }
+    }
+  }, [lectureData]);
+
+  React.useEffect(() => {
+    if (questionData) {
+      setQuestionElements(
+        questionData.map((question) => {
+          return (
+            <Question
+              explanation={question?.Explanation}
+              sources={question?.Sources}
+              questionID={question._id}
+              qClicked={qClicked}
+              key={question._id}
+              question={question}
+              setScore={setScore}
+              setQClicked={setQClicked}
+              finished={finished}
+              correct={correct}
+              setIsCorrect={setIsCorrect}
+              answers={question.allAnswers}
+            />
+          );
+        })
+      );
+    }
+  }, [questionData, qClicked]);
+
+  // winning
+  React.useEffect(() => {
+    if (
+      Object.keys(qClicked)?.length === questionData?.length &&
+      Object.keys(qClicked)?.length !== 0
+    ) {
+      setFinished(true);
+    } else if (Object.keys(qClicked)?.length === 0) {
+      setFinished(false);
+    }
+  }, [qClicked, questionData?.length]);
+
   return (
     <>
+      {preloader && (
+        <div className="flex justify-center">
+          <Preloader />
+        </div>
+      )}
       {error && <Error />}
+      {/* LECTURE BODY */}
       {!error && lectureData && (
         <div>
           <div className="lecture-inner">
-            <h1 className="text-logo">{lectureData.name}</h1>
+            <h1 className="text-dark font-bold">{lectureData.name}</h1>
             <div dangerouslySetInnerHTML={{ __html: textOutput }}></div>
           </div>
+          {/* QUESTIONS */}
+          {questionElements && (
+            <div className="questions-section">
+              <hr className="mb-5 mt-5"></hr>
+              <h2 className="text-dark font-bold">
+                Ověřte si znalosti <Emoji label="brain" symbol="🧠" />
+              </h2>
+              <div className="question-wrapper flex justify-center flex-col">
+                {questionElements}
+              </div>
+            </div>
+          )}
+          {finished && (
+            <Win
+              score={score}
+              numberOfQuestions={questionData.length}
+              restart={() => {}}
+              restartButtons={false}
+            />
+          )}
+          {/* back and forth CHEVRONS */}
           <div className="arrow-container flex w-full justify-between text-2xl max-w-4xl">
             {noArray?.indexOf(lectureNo) > 0 ? (
               <a
