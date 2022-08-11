@@ -16,12 +16,12 @@ import AdminRouter from "./components/admin/AdminRouter";
 const authContext = React.createContext(null);
 
 function App() {
-  const { token, setToken } = useToken();
-  console.log(token);
+  const { token, setToken, role } = useToken();
+
   return (
     <>
       <BrowserRouter>
-        <authContext.Provider value={token}>
+        <authContext.Provider value={{token, role}}>
           <Routes>
             <Route
               path="/"
@@ -30,7 +30,7 @@ function App() {
               <Route path="*" element={<NotFound />} />
               <Route index element={<Main />} />
               <Route path="quiz" element={<Quiz />} />
-              <Route path="admin/*" element={token ? <AdminRouter /> : <NotLoggedIn />} />
+              <Route path="admin/*" element={<AdminRouter />} />
               <Route path="lectures/*" element={<LectureRouter />} />
             </Route>
           </Routes>

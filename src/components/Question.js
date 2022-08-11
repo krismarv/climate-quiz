@@ -35,7 +35,10 @@ const Question = React.memo(function Question(props) {
     default:
       answerElements = <></>;
   }
-  // ok!!
+  
+  // on answering correctly, add into db
+  
+
   return (
     <div className="question-container w-11/12 max-w-4xl m-2 p-4 bg-neutral rounded-md">
       <div className="question-text font-semibold mb-3 text-lg">

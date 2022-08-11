@@ -4,10 +4,13 @@ import circle from "../circle.png";
 import { authContext } from "../App";
 
 export default function Nav(props) {
-  const contToken = React.useContext(authContext);
+  const auth = React.useContext(authContext);
   const [openNav, setOpenNav] = React.useState(false);
-  const [navElements, setNavElements] = React.useState()
+  const [navElements, setNavElements] = React.useState();
 
+  let admin = auth.role==="admin"
+
+  console.log(auth)
   React.useEffect(() => {
     let body = document.querySelector("body");
     if (props.loginVisible) body.classList.add("no-scroll");
@@ -17,7 +20,7 @@ export default function Nav(props) {
   // nav elements
   React.useEffect(() => {
     let navs;
-    if (contToken) {
+    if (admin) {
       navs = [{name: "Kvíz", link:"/quiz"}, {name: "Lekce", link:"/lectures"},{ name: "Admin", link: "/admin", class: "admin-link border-b-4 border-gray-500 uppercase font-bold" }];
     } else {
       navs = [{name: "Kvíz", link:"/quiz"}, {name: "Lekce", link:"/lectures"}]
@@ -27,7 +30,7 @@ export default function Nav(props) {
         <a href={el.link} className={el.class}>{el.name}</a>
       )
     }))
-  }, [contToken]);
+  }, [auth]);
 
   // conditional login link
   function LoginLink() {

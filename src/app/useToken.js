@@ -1,4 +1,5 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import jwt_decode from "jwt-decode";
 
 export default function useToken() {
   // initializer
@@ -19,8 +20,20 @@ export default function useToken() {
     }  
   }
 
+  const [role, setRole] = React.useState()
+
+  // get user role
+  React.useEffect(()=>{
+    if (token) {
+      setRole(jwt_decode(token).role)
+    } else {
+      setRole("")
+    }
+  },[token])
+
   return {
     setToken: saveToken,
-    token: token
+    token: token, 
+    role
   }
 }
