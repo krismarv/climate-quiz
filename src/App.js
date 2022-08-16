@@ -16,12 +16,12 @@ import AdminRouter from "./components/admin/AdminRouter";
 const authContext = React.createContext(null);
 
 function App() {
-  const { token, setToken, role } = useToken();
+  const { token, setToken, role, id } = useToken();
 
   return (
     <>
       <BrowserRouter>
-        <authContext.Provider value={{token, role}}>
+        <authContext.Provider value={{token, role, id}}>
           <Routes>
             <Route
               path="/"

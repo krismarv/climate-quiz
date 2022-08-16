@@ -5,20 +5,20 @@ import { useParams } from "react-router-dom";
 import Error from "../Error";
 import { useLocation } from "react-router-dom";
 import { generateHTML } from "@tiptap/html";
-// import Document from "@tiptap/extension-document";
-// import Text from "@tiptap/extension-text";
-// import Paragraph from "@tiptap/extension-paragraph";
-// import Bold from "@tiptap/extension-bold";
-// import Italic from "@tiptap/extension-italic";
-// import Heading from "@tiptap/extension-heading";
 import Image from "@tiptap/extension-image";
 import StarterKit from "@tiptap/starter-kit";
 import Preloader from "../Preloader";
 import Question from "../Question";
 import Emoji from "../Emoji";
 import Win from "../Win";
+import { authContext } from "../../App";
 
 export default function LectureSingle() {
+
+  let auth = React.useContext(authContext)
+  let userID = auth.id
+
+
   const [lectureNo, setLectureNo] = React.useState();
   const [lectureData, setLectureData] = React.useState();
   const [error, setError] = React.useState(false);
@@ -150,6 +150,21 @@ export default function LectureSingle() {
       setFinished(false);
     }
   }, [qClicked, questionData?.length]);
+
+  // save finished lecture (ticks in lecture list)
+  React.useEffect(()=>{
+    if (finished&&userID) {
+      console.log("saving")
+      fetch(process.env.REACT_APP_SERVER_URL+"/api/users/finish-lecture", {
+        method: "PATCH", 
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          userID: userID, 
+          lectureID: lectureData._id
+        })
+      })
+    }
+  }, [finished])
 
   return (
     <>

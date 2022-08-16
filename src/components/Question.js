@@ -5,6 +5,8 @@ import Abcd from "./question-elements/Abcd";
 import Estimate from "./question-elements/Estimate";
 
 const Question = React.memo(function Question(props) {
+
+  const [correctAnswer, setCorrectAnswer] = React.useState()
   let answerElements;
   switch (props.question.Question_type) {
     case "abcd":
@@ -16,6 +18,9 @@ const Question = React.memo(function Question(props) {
           question={props.question}
           setScore={props.setScore}
           setQClicked={props.setQClicked}
+          correct={props.correct}
+          setIsCorrect={props.setIsCorrect}
+          setCorrectAnswer={setCorrectAnswer}
         />
       );
       break;
@@ -28,7 +33,8 @@ const Question = React.memo(function Question(props) {
           setQClicked={props.setQClicked}
           finished={props.finished}
           correct={props.correct}
-            setIsCorrect={props.setIsCorrect}
+          setIsCorrect={props.setIsCorrect}
+          setCorrectAnswer={setCorrectAnswer}
         />
       );
       break;
@@ -37,7 +43,18 @@ const Question = React.memo(function Question(props) {
   }
   
   // on answering correctly, add into db
-  
+  React.useEffect(()=>{
+    if (correctAnswer) {
+      console.log("Now sending");
+      fetch(process.env.REACT_APP_SERVER_URL+"/api/users/assign-question", {
+        method: "PATCH",
+        headers: {"Content-type": "application/json"}, 
+        body: {
+          
+        }
+      })
+    }
+  },[ correctAnswer])
 
   return (
     <div className="question-container w-11/12 max-w-4xl m-2 p-4 bg-neutral rounded-md">

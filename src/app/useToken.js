@@ -21,19 +21,24 @@ export default function useToken() {
   }
 
   const [role, setRole] = React.useState()
+  const [id, setID] = React.useState()
 
   // get user role
   React.useEffect(()=>{
     if (token) {
-      setRole(jwt_decode(token).role)
+      let decoded = jwt_decode(token)
+      setRole(decoded.role)
+      setID(decoded.id)
     } else {
       setRole("")
+      setID("")
     }
   },[token])
 
   return {
     setToken: saveToken,
     token: token, 
-    role
+    role, 
+    id
   }
 }

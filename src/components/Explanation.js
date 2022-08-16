@@ -9,7 +9,7 @@ export default function Explanation(props) {
     <section className="mt-5 bg-white opacity-75 p-5 rounded-lg">
       <div
         className="explanation"
-        dangerouslySetInnerHTML={{__html: generateHTML(props.question.Explanation, [
+        dangerouslySetInnerHTML={{__html: props.question.Explanation ? generateHTML(props.question.Explanation, [
           StarterKit,
           Image.configure({
             HTMLAttributes: {
@@ -17,13 +17,13 @@ export default function Explanation(props) {
             },
             inline: true,
           }),
-        ])}}
+        ]) : ""}}
       ></div>
       <div className="sources-container bg-stone-50 p-2">
         <h2 className="text-lg font-bold mt-6">Zdroje</h2>
         <div
           className="sources"
-          dangerouslySetInnerHTML={{__html: generateHTML(props.question.Sources, [
+          dangerouslySetInnerHTML={{__html: props.question.Sources ? generateHTML(props.question.Sources, [
             StarterKit,
             Image.configure({
               HTMLAttributes: {
@@ -31,7 +31,7 @@ export default function Explanation(props) {
               },
               inline: true,
             }),
-          ])}}
+          ]) : ""}}
         ></div>
       </div>
     </section>

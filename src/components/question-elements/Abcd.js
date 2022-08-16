@@ -12,8 +12,10 @@ export default function Abcd (props) {
       props.setScore((prevScore) => {
         return prevScore + 1;
       });
+      props.setCorrectAnswer(true)
     } else {
       event.target.classList.add("wrong");
+      props.setCorrectAnswer(false)
     }
     // remaining answers unclickable
     let allQAnswers = document.querySelectorAll(

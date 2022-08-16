@@ -22,8 +22,10 @@ export default function Estimate(props) {
     if ((estimate > (right - (right * 0.1)) && estimate < (right + (right * 0.1)))) {
       props.setScore((oldScore) => oldScore + 1);
       props.setIsCorrect(true);
+      props.setCorrectAnswer(true)
     } else {
       props.setIsCorrect(false);
+      props.setCorrectAnswer(false)
     }
   }
   return (
