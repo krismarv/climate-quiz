@@ -3,8 +3,12 @@ import "../css/question.css";
 import Explanation from "./Explanation";
 import Abcd from "./question-elements/Abcd";
 import Estimate from "./question-elements/Estimate";
+import { authContext } from "../App";
 
 const Question = React.memo(function Question(props) {
+
+  let auth = React.useContext(authContext)
+  let userId = auth.id
 
   const [correctAnswer, setCorrectAnswer] = React.useState()
   let answerElements;
@@ -45,13 +49,14 @@ const Question = React.memo(function Question(props) {
   // on answering correctly, add into db
   React.useEffect(()=>{
     if (correctAnswer) {
-      console.log("Now sending");
+      console.log(props.question._id);
       fetch(process.env.REACT_APP_SERVER_URL+"/api/users/assign-question", {
         method: "PATCH",
         headers: {"Content-type": "application/json"}, 
-        body: {
-          
-        }
+        body: JSON.stringify({
+          userId: userId,
+          questionId: props.question._id
+        })
       })
     }
   },[ correctAnswer])

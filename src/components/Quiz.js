@@ -3,8 +3,7 @@ import Question from "./Question";
 import Win from "./Win";
 import Empty from "./Empty";
 import Preloader from "./Preloader";
-import { convertFromRaw } from "draft-js";
-import { stateToHTML } from "draft-js-export-html";
+
 
 
 export default function Quiz(props) {
@@ -62,8 +61,6 @@ export default function Quiz(props) {
         return (
           <Question
             // will have to convert from raw, -att
-            explanation={"jj"}
-            sources={"question.Sources"}
             questionID={questions.indexOf(question)}
             qClicked={qClicked}
             key={question._id}
