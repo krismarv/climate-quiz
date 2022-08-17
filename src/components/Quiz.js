@@ -5,12 +5,9 @@ import Empty from "./Empty";
 import Preloader from "./Preloader";
 import { authContext } from "../App";
 
-
-
 export default function Quiz(props) {
-
-  let auth = React.useContext(authContext)
-  let userId = auth.id
+  let auth = React.useContext(authContext);
+  let userId = auth.id;
 
   const [questions, setQuestions] = React.useState([]);
   const [questionElements, setQuestionElements] = React.useState("");
@@ -21,44 +18,73 @@ export default function Quiz(props) {
   const [pagination, setPagination] = React.useState(
     JSON.parse(localStorage.getItem("pagination")) || 1
   );
-  const [loggedInRestart, setLoggedInRestart] = React.useState(false)
+  const [loggedInRestart, setLoggedInRestart] = React.useState(false);
   const [questionsEmpty, setQuestionsEmpty] = React.useState(false);
   const [correct, setIsCorrect] = React.useState("");
-  const [preLoader, setPreLoader] = React.useState(false)
+  const [preLoader, setPreLoader] = React.useState(false);
 
   // initialize question list
+  // should rewrite for clarity
   function initialize() {
     setQuestionsEmpty(false);
-    setPreLoader(true)
-    fetch(process.env.REACT_APP_SERVER_URL + `/api/questions?page=${pagination}&limit=${numberOfQuestions}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setPreLoader(false)
-        let dataAll = data.map((question) => {
-          if (question.Question_type === "abcd") {
-            let answers = [...question.Wrong_answers];
-            answers.splice(
-              Math.floor(Math.random() * answers.length),
-              0,
-              question.Right_answer
-            );
-            return { ...question, allAnswers: answers };
-          } else {
-            return { ...question };
-          }
-        });
-        setQuestions(dataAll);
-        if (!data.length) {
-          setQuestionsEmpty(true);
+    setPreLoader(true);
+
+    // get notQuestions array (previously correctly answered questions that will get filtered out)
+    let correctAnswers = [];
+    if (!userId) {
+      if (localStorage.getItem("correctAnswers"))
+        correctAnswers = [localStorage.getItem("correctAnswers")];
+      console.log(correctAnswers);
+      console.log(typeof correctAnswers);
+      getQuestions(correctAnswers);
+    } else {
+      correctAnswers = [];
+      async function getCorrect() {
+        let rs = await fetch(
+          process.env.REACT_APP_SERVER_URL +
+            `/api/users/get-user-questions/${userId}`
+        );
+        correctAnswers = await rs.json();
+        return JSON.stringify(correctAnswers);
+      }
+      async function fetchWithId() {
+        getQuestions(await getCorrect());
+      }
+      fetchWithId();
+    }
+    async function getQuestions(correctAnswers) {
+      let rsQuiz = await fetch(
+        process.env.REACT_APP_SERVER_URL +
+          `/api/questions?page=${pagination}&limit=${numberOfQuestions}&notQuestions=${correctAnswers}`
+      );
+      let data = await rsQuiz.json();
+      setPreLoader(false);
+      let dataAll = data.map((question) => {
+        if (question.Question_type === "abcd") {
+          let answers = [...question.Wrong_answers];
+          answers.splice(
+            Math.floor(Math.random() * answers.length),
+            0,
+            question.Right_answer
+          );
+          return { ...question, allAnswers: answers };
+        } else {
+          return { ...question };
         }
-        return data;
       });
+      setQuestions(dataAll);
+      if (!data.length) {
+        setQuestionsEmpty(true);
+      }
+    }
   }
 
   // responsible for 2 initial renders
   React.useEffect(() => {
-    initialize();
-  }, []);
+    if (userId) {
+      initialize();
+    }
+  }, [userId]);
 
   // question JSX elements
   React.useEffect(() => {
@@ -102,7 +128,7 @@ export default function Quiz(props) {
       return oldPagination + 1;
     });
     // setQClicked({});
-    
+
     // initialize();
     // setFinished(false);
     // setScore(0);
@@ -129,14 +155,30 @@ export default function Quiz(props) {
     setIsCorrect("");
   }, [pagination]);
 
+  // doesn't trigger rerender when logged in!
   function startAgain() {
-    setPagination(1);
-    console.log("setting pagination")
+    if (userId) {
+      fetch(
+        process.env.REACT_APP_SERVER_URL +
+          `/api/users/restart-questions/${userId}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: userId,
+          }),
+        }
+      ).then(setPagination(1));
+    } else {
+      localStorage.setItem("correctAnswers", null);
+      console.log("removing");
+      setPagination(1);
+    }
   }
 
   return (
     <div className="page flex items-center flex-col pl-5 pr-5">
-      {preLoader ?  <Preloader/> : ""}
+      {preLoader ? <Preloader /> : ""}
       {questionElements}
       {finished ? (
         <Win

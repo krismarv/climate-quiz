@@ -56,14 +56,17 @@ const Question = React.memo(function Question(props) {
           questionId: props.question._id,
         }),
       });
-    } else {
+    } else if (correctAnswer&&!userId) {
       let localCorrect = localStorage.getItem("correctAnswers");
+      if (localCorrect) localCorrect = JSON.parse(localCorrect);
       localStorage.setItem(
         "correctAnswers",
-        localCorrect ? localCorrect.push(props.question._id) : [props.question._id]
+        localCorrect?.length
+          ? JSON.stringify(localCorrect.concat(props.question._id))
+          : JSON.stringify([props.question._id])
       );
     }
-  }, [correctAnswer]);
+  }, [correctAnswer, userId]);
 
   return (
     <div className="question-container w-11/12 max-w-4xl m-2 p-4 bg-neutral rounded-md">
