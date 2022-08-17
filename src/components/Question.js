@@ -6,11 +6,10 @@ import Estimate from "./question-elements/Estimate";
 import { authContext } from "../App";
 
 const Question = React.memo(function Question(props) {
+  let auth = React.useContext(authContext);
+  let userId = auth.id;
 
-  let auth = React.useContext(authContext)
-  let userId = auth.id
-
-  const [correctAnswer, setCorrectAnswer] = React.useState()
+  const [correctAnswer, setCorrectAnswer] = React.useState();
   let answerElements;
   switch (props.question.Question_type) {
     case "abcd":
@@ -45,21 +44,26 @@ const Question = React.memo(function Question(props) {
     default:
       answerElements = <></>;
   }
-  
-  // on answering correctly, add into db
-  React.useEffect(()=>{
-    if (correctAnswer) {
-      console.log(props.question._id);
-      fetch(process.env.REACT_APP_SERVER_URL+"/api/users/assign-question", {
+
+  // on answering correctly, add into db (or localStorage if not logged in)
+  React.useEffect(() => {
+    if (correctAnswer && userId) {
+      fetch(process.env.REACT_APP_SERVER_URL + "/api/users/assign-question", {
         method: "PATCH",
-        headers: {"Content-type": "application/json"}, 
+        headers: { "Content-type": "application/json" },
         body: JSON.stringify({
           userId: userId,
-          questionId: props.question._id
-        })
-      })
+          questionId: props.question._id,
+        }),
+      });
+    } else {
+      let localCorrect = localStorage.getItem("correctAnswers");
+      localStorage.setItem(
+        "correctAnswers",
+        localCorrect ? localCorrect.push(props.question._id) : [props.question._id]
+      );
     }
-  },[ correctAnswer])
+  }, [correctAnswer]);
 
   return (
     <div className="question-container w-11/12 max-w-4xl m-2 p-4 bg-neutral rounded-md">
@@ -68,7 +72,7 @@ const Question = React.memo(function Question(props) {
       </div>
       {answerElements}
       {props.qClicked[props.questionID] && props.explanation ? (
-        <Explanation question={props.question}/>
+        <Explanation question={props.question} />
       ) : (
         ""
       )}

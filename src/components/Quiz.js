@@ -3,10 +3,15 @@ import Question from "./Question";
 import Win from "./Win";
 import Empty from "./Empty";
 import Preloader from "./Preloader";
+import { authContext } from "../App";
 
 
 
 export default function Quiz(props) {
+
+  let auth = React.useContext(authContext)
+  let userId = auth.id
+
   const [questions, setQuestions] = React.useState([]);
   const [questionElements, setQuestionElements] = React.useState("");
   const [qClicked, setQClicked] = React.useState({});
@@ -16,6 +21,7 @@ export default function Quiz(props) {
   const [pagination, setPagination] = React.useState(
     JSON.parse(localStorage.getItem("pagination")) || 1
   );
+  const [loggedInRestart, setLoggedInRestart] = React.useState(false)
   const [questionsEmpty, setQuestionsEmpty] = React.useState(false);
   const [correct, setIsCorrect] = React.useState("");
   const [preLoader, setPreLoader] = React.useState(false)
@@ -88,7 +94,9 @@ export default function Quiz(props) {
     }
   }, [qClicked, numberOfQuestions, questions.length]);
 
-  // restart the quiz
+  // NEW quiz (after NEW QUIZ button)
+  // if user is not logged in, the quiz loads with pagination incremented
+  // if user is logged in, the pagination doesn't increment but previously correct answers will filter out
   function restart() {
     setPagination((oldPagination) => {
       return oldPagination + 1;
@@ -101,7 +109,7 @@ export default function Quiz(props) {
     // setIsCorrect("");
   }
 
-  // persist pagination
+  // does the RESTARTing
   React.useEffect(() => {
     localStorage.setItem("pagination", JSON.stringify(pagination));
     let allQAnswers = document.querySelectorAll(".answer");
