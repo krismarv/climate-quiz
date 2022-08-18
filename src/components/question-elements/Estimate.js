@@ -33,13 +33,11 @@ export default function Estimate(props) {
 
   React.useEffect(() => {
     if (props.reset) {
-      console.log("resetting")
-      console.log("reset useeffect",props.reset)
       props.setCorrectAnswer("");
+      props.setReset(false)
     }
   }, [props.reset]);
-  console.log("props.reset", props.reset)
-  console.log(props.correctAnswer);
+
   return (
     <div>
       <div className="estimate-value text-sm text-gray-600">

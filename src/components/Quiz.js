@@ -22,21 +22,18 @@ export default function Quiz(props) {
   const [questionsEmpty, setQuestionsEmpty] = React.useState(false);
   const [correct, setIsCorrect] = React.useState("");
   const [preLoader, setPreLoader] = React.useState(false);
-  const [reset, setReset] = React.useState(false)
+  const [reset, setReset] = React.useState(false);
 
   // initialize question list
   // should rewrite for clarity
   function initialize() {
     setQuestionsEmpty(false);
     setPreLoader(true);
-
     // get notQuestions array (previously correctly answered questions that will get filtered out)
     let correctAnswers = [];
     if (!userId) {
       if (localStorage.getItem("correctAnswers"))
         correctAnswers = [localStorage.getItem("correctAnswers")];
-      console.log(correctAnswers);
-      console.log(typeof correctAnswers);
       getQuestions(correctAnswers);
     } else {
       correctAnswers = [];
@@ -59,24 +56,24 @@ export default function Quiz(props) {
           `/api/questions?page=${pagination}&limit=${numberOfQuestions}&notQuestions=${correctAnswers}`
       );
       let data = await rsQuiz.json();
-      setPreLoader(false);
-      let dataAll = data.map((question) => {
-        if (question.Question_type === "abcd") {
-          let answers = [...question.Wrong_answers];
-          answers.splice(
-            Math.floor(Math.random() * answers.length),
-            0,
-            question.Right_answer
-          );
-          return { ...question, allAnswers: answers };
-        } else {
-          return { ...question };
+        setPreLoader(false);
+        let dataAll = data.map((question) => {
+          if (question.Question_type === "abcd") {
+            let answers = [...question.Wrong_answers];
+            answers.splice(
+              Math.floor(Math.random() * answers.length),
+              0,
+              question.Right_answer
+            );
+            return { ...question, allAnswers: answers };
+          } else {
+            return { ...question };
+          }
+        });
+        setQuestions(dataAll);
+        if (!data.length) {
+          setQuestionsEmpty(true);
         }
-      });
-      setQuestions(dataAll);
-      if (!data.length) {
-        setQuestionsEmpty(true);
-      }
     }
   }
 
@@ -104,6 +101,8 @@ export default function Quiz(props) {
             correct={correct}
             setIsCorrect={setIsCorrect}
             reset={reset}
+            // needs to be set inside Estimate so question doesn't stay marked wrong
+            setReset={setReset}
           />
         );
       })
@@ -126,19 +125,12 @@ export default function Quiz(props) {
   // if user is not logged in, the quiz loads with pagination incremented
   // if user is logged in, the pagination doesn't increment but previously correct answers will filter out
   function restart() {
-    console.log("restarting restart button")
     setPagination((oldPagination) => {
       return oldPagination + 1;
     });
     setReset(true);
-    // setQClicked({});
-
-    // initialize();
-    // setFinished(false);
-    // setScore(0);
-    // setIsCorrect("");
   }
-console.log("inQuiz reset",reset)
+
   // does the RESTARTing
   React.useEffect(() => {
     localStorage.setItem("pagination", JSON.stringify(pagination));
@@ -172,10 +164,13 @@ console.log("inQuiz reset",reset)
             userId: userId,
           }),
         }
-      ).then(setPagination(1));
+      ).then((res) => {
+        if (res.status > 199 && res.status < 300) {
+          setPagination((old) => old + 1);
+        }
+      });
     } else {
       localStorage.setItem("correctAnswers", null);
-      console.log("removing");
       setPagination(1);
     }
   }

@@ -43,7 +43,9 @@ const Question = React.memo(function Question(props) {
           setCorrectAnswer={setCorrectAnswer}
           correctAnswer={correctAnswer}
           reset={props.reset}
+          setReset={props.setReset}
           qClicked={props.qClicked}
+
         />
       );
       break;
