@@ -22,6 +22,7 @@ export default function Quiz(props) {
   const [questionsEmpty, setQuestionsEmpty] = React.useState(false);
   const [correct, setIsCorrect] = React.useState("");
   const [preLoader, setPreLoader] = React.useState(false);
+  const [reset, setReset] = React.useState(false)
 
   // initialize question list
   // should rewrite for clarity
@@ -102,6 +103,7 @@ export default function Quiz(props) {
             finished={finished}
             correct={correct}
             setIsCorrect={setIsCorrect}
+            reset={reset}
           />
         );
       })
@@ -124,9 +126,11 @@ export default function Quiz(props) {
   // if user is not logged in, the quiz loads with pagination incremented
   // if user is logged in, the pagination doesn't increment but previously correct answers will filter out
   function restart() {
+    console.log("restarting restart button")
     setPagination((oldPagination) => {
       return oldPagination + 1;
     });
+    setReset(true);
     // setQClicked({});
 
     // initialize();
@@ -134,7 +138,7 @@ export default function Quiz(props) {
     // setScore(0);
     // setIsCorrect("");
   }
-
+console.log("inQuiz reset",reset)
   // does the RESTARTing
   React.useEffect(() => {
     localStorage.setItem("pagination", JSON.stringify(pagination));

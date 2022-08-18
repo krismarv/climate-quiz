@@ -9,7 +9,10 @@ const Question = React.memo(function Question(props) {
   let auth = React.useContext(authContext);
   let userId = auth.id;
 
-  const [correctAnswer, setCorrectAnswer] = React.useState();
+  const [correctAnswer, setCorrectAnswer] = React.useState("");
+
+
+
   let answerElements;
   switch (props.question.Question_type) {
     case "abcd":
@@ -38,6 +41,9 @@ const Question = React.memo(function Question(props) {
           correct={props.correct}
           setIsCorrect={props.setIsCorrect}
           setCorrectAnswer={setCorrectAnswer}
+          correctAnswer={correctAnswer}
+          reset={props.reset}
+          qClicked={props.qClicked}
         />
       );
       break;
@@ -67,6 +73,9 @@ const Question = React.memo(function Question(props) {
       );
     }
   }, [correctAnswer, userId]);
+
+  // 
+
 
   return (
     <div className="question-container w-11/12 max-w-4xl m-2 p-4 bg-neutral rounded-md">

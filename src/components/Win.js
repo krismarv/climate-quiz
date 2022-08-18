@@ -22,7 +22,7 @@ export default function Win(props) {
       </div>
       {props.restartButtons && (
         <>
-          <button className="restart-button" onClick={props.restart}>
+          <button className="restart-button" onClick={(e)=>props.restart(e)}>
             Nový kvíz
           </button>
           <button className="main-button">Hlavní stránka</button>

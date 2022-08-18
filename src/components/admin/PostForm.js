@@ -122,7 +122,6 @@ export default function PostForm() {
     }).then((res) => console.log(res));
   }
 
-  console.log(editor2Content)
   return (
     <>
       <div className="choose-type flex bg-yellow-200 p-4 rounded-md">
@@ -130,7 +129,7 @@ export default function PostForm() {
         {selectElement}
       </div>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={(e)=>handleSubmit(e)}>
         <div className="input-group">
           <label>
             Znění otázky:
