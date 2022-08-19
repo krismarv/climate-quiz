@@ -8,28 +8,80 @@ import Tags from "./Tags";
 import Abcd from "./Abcd";
 import Estimate from "./Estimate";
 import TiptapMenu from "../TiptapMenu";
-import { EditorContent, useEditor } from "@tiptap/react";
+import { EditorContent, useEditor, generateHTML } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { useParams } from "react-router-dom";
 
-export default function PostForm() {
-  const [questionType, setQuestionType] = React.useState({
-    abcd: false,
-    estimate: true,
-    // match: true,
-  });
+export default function PostForm(props) {
+  const [questionType, setQuestionType] = React.useState({});
   const [selectElement, setSelectElement] = React.useState(<></>);
   const [question, setQuestion] = React.useState({});
   const [inputState, setInputState] = React.useState({ 0: "" });
   const [editorContent, setEditorContent] = React.useState();
   const [editor2Content, setEditor2Content] = React.useState();
+  const [prefillContent, setPrefillContent] = React.useState();
 
+  // prefilling content in edit mode
+  let editMode = props.editable;
+  // question ID from url params
+  let { questionID } = useParams();
+  let questionParam = JSON.stringify([questionID]);
+
+    // initialize questionType in edit mode
+    function initializeQuestionType() {
+      let basicOptions = {
+        abcd: false, 
+        estimate: true, 
+        // match: false
+      }
+      if (editMode&&prefillContent?.[0].Question_type) {
+        Object.keys(basicOptions).forEach((k)=>{
+          basicOptions[k] = false;
+          if (prefillContent[0].Question_type === k) basicOptions[k] = true
+        })
+        return basicOptions
+      } else {
+        return basicOptions
+      }
+    }
+
+    React.useEffect(()=>{
+      setQuestionType(initializeQuestionType())
+    }, [editMode, prefillContent])
+
+  // getting the content for edit mode
+  async function getContent() {
+    const getData = await fetch(
+      process.env.REACT_APP_SERVER_URL +
+        `/api/questions?questions=${questionParam}&limit=1`
+    );
+    const jsonData = await getData.json();
+    setPrefillContent(jsonData);
+  }
+
+  React.useEffect(() => {
+    if (editMode) {
+      getContent();
+    }
+  }, []);
+
+  // EXPLANATION editor
   const editor1 = useEditor({
     extensions: [StarterKit, Image],
-    content: ``,
+    content: "",
     onUpdate({ editor }) {
       setEditorContent(editor.getJSON());
     },
   });
+
+  // prefill explanation editor if in edit mode
+  // CRASHES ON HOT LOAD
+  React.useEffect(() => {
+    if (editMode && prefillContent?.[0].Explanation) {
+      editor1.commands.setContent(prefillContent[0].Explanation || "");
+    }
+  }, [prefillContent]);
+
   const editor2 = useEditor({
     extensions: [StarterKit, Image],
     content: ``,
@@ -38,8 +90,15 @@ export default function PostForm() {
     },
   });
 
-  //  COMMON
+  console.log(prefillContent)
+  React.useEffect(() => {
+    if (editMode && prefillContent?.[0].Sources) {
+      editor2.commands.setContent(prefillContent[0]?.Sources || "");
+    }
+  }, [prefillContent]);
+
   // select question type elements
+  // CRASHES ON HOT LOAD
   React.useEffect(() => {
     let keys = Object.keys(questionType);
     let selected = keys.filter((k) => {
@@ -95,7 +154,7 @@ export default function PostForm() {
     setQuestion((oldQuestion) => {
       return {
         ...oldQuestion,
-        Explanation: editorContent
+        Explanation: editorContent,
       };
     });
   }, [editorContent]);
@@ -129,7 +188,7 @@ export default function PostForm() {
         {selectElement}
       </div>
 
-      <form onSubmit={(e)=>handleSubmit(e)}>
+      <form onSubmit={(e) => handleSubmit(e)}>
         <div className="input-group">
           <label>
             Znění otázky:

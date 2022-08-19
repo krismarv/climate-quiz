@@ -10,7 +10,6 @@ export default function LectureList() {
 
   let auth = React.useContext(authContext);
   let userId = auth.id;
-  console.log(userId);
 
   React.useEffect(() => {
     setPreloader(true);
@@ -20,14 +19,12 @@ export default function LectureList() {
       .then((data) => {
         setPreloader(false);
         setLectureList(data);
-        console.log(data);
       });
   }, []);
 
   // fetch finished lectures (ticks)
   React.useEffect(() => {
     async function fetchFinished() {
-      console.log("lskdnvljfdnkjnkjn");
       let rs = await fetch(
         process.env.REACT_APP_SERVER_URL +
           `/api/users/get-user-lectures/${userId}`

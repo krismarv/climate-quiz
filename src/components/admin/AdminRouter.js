@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, useMatch } from "react-router-dom";
+import { Routes, Route, useMatch, useParams } from "react-router-dom";
 import NotLoggedIn from "../NotLoggedIn";
 import PostForm from "./PostForm";
 import PostLecture from "./PostLecture";
@@ -20,10 +20,12 @@ export default function AdminRouter() {
               path="post-questions"
               element={admin ? <PostForm /> : <NotLoggedIn />}
             />
+            <Route path="questions/:questionID" element = {admin ? <PostForm editable={true}/> : <NotLoggedIn />} />
             <Route
               path="post-lecture"
               element={admin ? <PostLecture /> : <NotLoggedIn />}
             />
+            <Route path="lectures/:lectureID" element = {admin ? <PostLecture /> : <NotLoggedIn />} />
           </Routes>
         </div>
       </div>

@@ -40,7 +40,7 @@ code {
     monospace;
 }
 a {
-  border-bottom:solid 1px
+  border-bottom:solid 1px 
 }
 a.no-bottom, button a {
   border-bottom:none
