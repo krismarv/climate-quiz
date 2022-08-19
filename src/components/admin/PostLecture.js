@@ -31,9 +31,10 @@ export default function PostLecture() {
 
   // load questions, create question elements
   React.useEffect(() => {
-    fetch(process.env.REACT_APP_SERVER_URL + "/api/questions")
+    fetch(process.env.REACT_APP_SERVER_URL + "/api/questions?limit=1000")
       .then((res) => res.json())
       .then((data) => {
+        console.log(data)
         let newData = data.map((q) => {
           if (q.Question_type === "abcd") {
             let allAnswers = q.Wrong_answers.concat(q.Right_answer);
@@ -173,6 +174,8 @@ export default function PostLecture() {
               correct={false}
               setIsCorrect={() => {}}
               answers={activeQuestion.allAnswers}
+              reset={false}
+              setReset={()=>{}}
             />
           </div>
         </>

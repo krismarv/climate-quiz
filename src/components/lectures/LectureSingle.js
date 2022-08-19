@@ -88,7 +88,7 @@ export default function LectureSingle() {
       if (lectureData.Questions.length) {
         fetch(
           process.env.REACT_APP_SERVER_URL +
-            `/api/questions?questions=${JSON.stringify(lectureData.Questions)}`
+            `/api/questions?questions=${JSON.stringify(lectureData.Questions)}&limit=1000`
         )
           .then((res) => res.json())
           .then((data) => {

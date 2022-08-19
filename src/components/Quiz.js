@@ -56,24 +56,25 @@ export default function Quiz(props) {
           `/api/questions?page=${pagination}&limit=${numberOfQuestions}&notQuestions=${correctAnswers}`
       );
       let data = await rsQuiz.json();
-        setPreLoader(false);
-        let dataAll = data.map((question) => {
-          if (question.Question_type === "abcd") {
-            let answers = [...question.Wrong_answers];
-            answers.splice(
-              Math.floor(Math.random() * answers.length),
-              0,
-              question.Right_answer
-            );
-            return { ...question, allAnswers: answers };
-          } else {
-            return { ...question };
-          }
-        });
-        setQuestions(dataAll);
-        if (!data.length) {
-          setQuestionsEmpty(true);
+      // ↓↑ sometimes renders with old data :(
+      setPreLoader(false);
+      let dataAll = data.map((question) => {
+        if (question.Question_type === "abcd") {
+          let answers = [...question.Wrong_answers];
+          answers.splice(
+            Math.floor(Math.random() * answers.length),
+            0,
+            question.Right_answer
+          );
+          return { ...question, allAnswers: answers };
+        } else {
+          return { ...question };
         }
+      });
+      setQuestions(dataAll);
+      if (!data.length) {
+        setQuestionsEmpty(true);
+      }
     }
   }
 
